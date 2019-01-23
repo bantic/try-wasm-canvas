@@ -49,6 +49,12 @@ impl MyStuff {
     self.data.as_ptr()
   }
 
+  pub fn set_data(&mut self, data:Vec<u8>, w:u32, h:u32) {
+    utils::set_panic_hook();
+    self.len = (w*h*4) as usize;
+    self.data = data;
+  }
+
   pub fn get_data(&self) -> *const u8 {
     self.data.as_ptr()
   }
@@ -64,15 +70,6 @@ impl MyStuff {
     }
   }
 
-  pub fn opaquify_data(&mut self) {
-    utils::set_panic_hook();
-    for i in 0..self.data.len() {
-      if i%4 == 3 {
-        self.data[i] = 255;
-      }
-    }
-  }
-
   pub fn color_data(&mut self, idx:u8) {
     utils::set_panic_hook();
     for i in 0..self.data.len() {
@@ -81,6 +78,13 @@ impl MyStuff {
       } else {
         self.data[i] = 0;
       }
+    }
+  }
+
+  pub fn invert_data(&mut self) {
+    for i in 0..self.data.len() {
+      if i % 4 == 3 { continue; }
+      self.data[i] = self.data[i] ^ 255;
     }
   }
 }
