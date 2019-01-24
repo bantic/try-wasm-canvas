@@ -44,6 +44,12 @@ I used `npm run build` to run the webpack build into www/dist
 
 Works on desktop Chrome, Safari, FF, mobile Safari. Mobile Chrome will show the initial inverted image but it doesn’t seem to react correctly to choosing a file. I suspect some issue but haven’t bothered to attempt to debug the mobile chrome devtools console.
 
+### Helpful links:
+
+- This [SO answer](https://stackoverflow.com/questions/50589083/typeerror-failed-to-execute-compile-on-webassembly-incorrect-response-mime/52732108#52732108) helped me realize I can comment out the streaming instantiation code to fix the mime/type issue
+- The [wasm-bindgen guide](https://rustwasm.github.io/wasm-bindgen/introduction.html) has helpful examples.
+- This [reddit thread](https://www.reddit.com/r/rust/comments/7knkrk/wasm_issues_when_using_more_than_one_memory_page/#ampf=undefined) might help explain my issue with memory not growing.
+
 # 🦀🕸️ `wasm-pack-template`
 
 A template for kick starting a Rust and WebAssembly project using
