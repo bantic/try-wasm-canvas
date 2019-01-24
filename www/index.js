@@ -45,13 +45,16 @@ function getImageData(w, h) {
 
 function addFileListener() {
   let input = document.getElementById('input-file');
-  input.addEventListener('input', async e => {
+  let handleInput = async e => {
+    alert('got new file! ' + e.target.files[0]);
     let file = e.target.files[0];
     let imageData = await getImageDataFromFile(file);
     m.set_data(imageData.data, imageData.width, imageData.height);
     m.invert_data();
     renderToCanvas(m, imageData.width, imageData.height);
-  });
+  };
+  // input.addEventListener('input', handleInput);
+  input.addEventListener('change', handleInput);
 }
 
 function getImageDataFromFile(file) {
