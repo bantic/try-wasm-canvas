@@ -47,6 +47,7 @@ Works on desktop Chrome, Safari, FF, mobile Safari. Mobile Chrome will show the 
 ### Helpful links:
 
 - This [SO answer](https://stackoverflow.com/questions/50589083/typeerror-failed-to-execute-compile-on-webassembly-incorrect-response-mime/52732108#52732108) helped me realize I can comment out the streaming instantiation code to fix the mime/type issue
+- The [rust and webassmebly book](https://rustwasm.github.io/book/game-of-life/debugging.html) had useful info for debugging, and for setting up this code initially.
 - The [wasm-bindgen guide](https://rustwasm.github.io/wasm-bindgen/introduction.html) has helpful examples.
 - This [reddit thread](https://www.reddit.com/r/rust/comments/7knkrk/wasm_issues_when_using_more_than_one_memory_page/#ampf=undefined) might help explain my issue with memory not growing.
 
