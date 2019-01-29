@@ -7,8 +7,77 @@ let h = 407;
 
 let data = getImageData(w, h).data;
 m.set_data(data, w, h);
-m.invert_data();
-renderToCanvas(m);
+renderToCanvas(m, w, h);
+
+function cycleBrightness() {
+  let minBrightness = -100;
+  let maxBrightness = 100;
+  let brightness = minBrightness;
+
+  let delta = 5;
+  let waitMs = 25;
+
+  let run = true;
+
+  function update() {
+    if (!run) {
+      return;
+    }
+    let now = new Date();
+    m.adjust_brightness(brightness);
+    console.log('adjust brightness took: ', new Date() - now);
+    now = new Date();
+    renderToCanvas(m);
+    console.log('render canvas took:', new Date() - now);
+    brightness += delta;
+
+    if (brightness > maxBrightness) {
+      brightness = maxBrightness;
+      delta = -1 * delta;
+    } else if (brightness < minBrightness) {
+      brightness = minBrightness;
+      delta = -1 * delta;
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  update();
+
+  return () => (run = false);
+}
+
+let cancelCycle;
+
+document.getElementById('cycle-brightness').addEventListener('click', e => {
+  if (cancelCycle) {
+    cancelCycle();
+    cancelCycle = null;
+    e.target.textContent = 'Cycle Brightness';
+  } else {
+    cancelCycle = cycleBrightness();
+    e.target.textContent = 'Cancel Brightness Cycle';
+  }
+});
+
+function invertImage() {
+  m.invert_data();
+  renderToCanvas(m);
+}
+
+document.getElementById('invert-image').addEventListener('click', e => {
+  if (cancelCycle) {
+    cancelCycle();
+    cancelCycle = null;
+  }
+  invertImage();
+});
+
+async function wait(ms) {
+  return new Promise(res => {
+    setTimeout(res, ms);
+  });
+}
 
 function clearCanvas() {
   let c = document.getElementById('canvas');
@@ -16,16 +85,18 @@ function clearCanvas() {
   ctx.clearRect(0, 0, c.width, c.height);
 }
 
-function renderToCanvas(m, w = 500, h = 407) {
+function renderToCanvas(m, w = null, h = null) {
   let ptr = m.get_data();
   let len = m.get_len();
   let bytes = memory.buffer.byteLength;
   let remainingBytes = bytes - ptr;
-  console.log(
-    `ptr ${ptr}, len ${len}, bytes ${bytes}, remainingBytes: ${remainingBytes}`
-  );
+  // console.log(
+  //   `ptr ${ptr}, len ${len}, bytes ${bytes}, remainingBytes: ${remainingBytes}`
+  // );
   let data = new Uint8ClampedArray(memory.buffer, m.get_data(), m.get_len());
   let c = document.getElementById('canvas');
+  w = w || c.width;
+  h = h || c.height;
   c.width = w;
   c.height = h;
   let imageData = new ImageData(data, w, h);
@@ -46,11 +117,13 @@ function getImageData(w, h) {
 function addFileListener() {
   let input = document.getElementById('input-file');
   let handleInput = async e => {
-    alert('got new file! ' + e.target.files[0]);
+    if (cancelCycle) {
+      cancelCycle();
+      cancelCycle = null;
+    }
     let file = e.target.files[0];
     let imageData = await getImageDataFromFile(file);
     m.set_data(imageData.data, imageData.width, imageData.height);
-    m.invert_data();
     renderToCanvas(m, imageData.width, imageData.height);
   };
   // input.addEventListener('input', handleInput);
